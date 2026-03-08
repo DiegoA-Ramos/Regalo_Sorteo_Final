@@ -1,6 +1,3 @@
-// ── DRAGDROP.JS ──────────────────────────────────────────────
-// HTML5 Drag & Drop API: reordenar participantes
-
 let dragSrc = null;
 
 function iniciarDragDrop(listaEl) {

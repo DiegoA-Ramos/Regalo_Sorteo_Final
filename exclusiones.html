@@ -38,14 +38,11 @@
       para que no le toquen en el sorteo. Arrástralos de regreso para quitarlos.
     </p>
 
-    <!-- tabs: seleccionar para quién se configuran exclusiones -->
     <p class="fw-bold mb-2" style="font-size:.88rem;">Configurar exclusiones para:</p>
     <div class="persona-tabs" id="persona-tabs"></div>
 
-    <!-- área drag & drop -->
     <div class="dd-grid mt-2">
 
-      <!-- zona izquierda: disponibles -->
       <div>
         <div class="dd-col-title verde">Puede sortear</div>
         <div class="dd-zone disponibles" id="zone-disponibles"
@@ -56,10 +53,8 @@
         </div>
       </div>
 
-      <!-- flecha central -->
       <div class="dd-arrow">⇄</div>
 
-      <!-- zona derecha: bloqueados -->
       <div>
         <div class="dd-col-title rojo">Bloqueados</div>
         <div class="dd-zone bloqueados" id="zone-bloqueados"
@@ -69,9 +64,8 @@
         </div>
       </div>
 
-    </div><!-- /dd-grid -->
+    </div>
 
-    <!-- resumen global de exclusiones -->
     <div id="resumen-wrap" class="mt-4" style="display:none;">
       <hr class="fancy" />
       <p class="fw-bold mb-2" style="font-size:.85rem;color:var(--muted);">Resumen de todas las exclusiones:</p>
@@ -92,7 +86,6 @@
 let personaActiva = null;
 let chipDragging  = null;
 
-// ── INIT ─────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   const ev = obtenerEvento();
   if (!ev || !ev.organizador)      { window.location.href = 'organizador.html';    return; }
@@ -101,7 +94,6 @@ window.addEventListener('DOMContentLoaded', () => {
   selPersona(ev.participantes[0]);
 });
 
-// ── TABS ──────────────────────────────────────────────────
 function renderTabs() {
   const ev   = obtenerEvento();
   const cont = document.getElementById('persona-tabs');
@@ -126,7 +118,6 @@ function selPersona(nombre) {
   renderZonas();
 }
 
-// ── ZONAS ─────────────────────────────────────────────────
 function renderZonas() {
   const ev    = obtenerEvento();
   const exObj = ev.exclusiones.find(e => e.persona === personaActiva) || { noPuedeDarA: [] };
@@ -167,7 +158,6 @@ function mkChip(nombre) {
   return c;
 }
 
-// ── DRAG HANDLERS ─────────────────────────────────────────
 function onOver(e, zone) {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
@@ -199,7 +189,6 @@ function onDrop(e, destino) {
   renderZonas();
 }
 
-// ── RESUMEN ───────────────────────────────────────────────
 function renderResumen() {
   const ev    = obtenerEvento();
   const wrap  = document.getElementById('resumen-wrap');
@@ -217,7 +206,6 @@ function renderResumen() {
   ).join('');
 }
 
-// ── TOAST ─────────────────────────────────────────────────
 function flashToast() {
   const t = document.getElementById('saved-toast');
   t.classList.add('show');

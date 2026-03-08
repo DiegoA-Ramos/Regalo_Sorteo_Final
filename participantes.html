@@ -25,11 +25,9 @@
     <div class="step-dot"></div>
   </div>
 
-  <!-- ── Bootstrap grid: 1 columna en móvil, 2 en md+ ── -->
   <div class="container-fluid px-3" style="max-width:720px; width:100%;">
     <div class="row g-4">
 
-      <!-- Columna izquierda: formulario para agregar -->
       <div class="col-12 col-md-5">
         <div class="card-box h-100">
           <h2 class="mb-1 fw-black">Agregar</h2>
@@ -53,7 +51,6 @@
         </div>
       </div>
 
-      <!-- Columna derecha: lista de participantes -->
       <div class="col-12 col-md-7">
         <div class="card-box h-100">
           <div class="d-flex justify-content-between align-items-center mb-3">
@@ -69,10 +66,10 @@
         </div>
       </div>
 
-    </div><!-- /row -->
-  </div><!-- /container -->
+    </div>
+  </div>
 
-</div><!-- /page-wrapper -->
+</div>
 
 <script src="js/storage.js"></script>
 <script>
@@ -99,10 +96,10 @@ function renderLista() {
   evento.participantes.forEach(nombre => {
     const esOrg = nombre === evento.organizador && evento.incluirOrganizador;
     const item  = document.createElement('div');
-    item.className = 'drag-item mb-2';  /* reutiliza estilo de tarjeta del CSS */
+    item.className = 'drag-item mb-2';  
     item.style.cursor = 'default';
     item.innerHTML = `
-      <span style="font-size:1.1rem;">👤</span>
+      <span style="font-size:1.1rem;"></span>
       <span class="drag-name">
         ${nombre}
         ${esOrg ? '<small style="color:var(--muted);font-weight:600;"></small>' : ''}
@@ -140,7 +137,6 @@ function agregar() {
 function eliminar(nombre) {
   const evento = obtenerEvento();
   evento.participantes = evento.participantes.filter(p => p !== nombre);
-  // limpiar exclusiones que involucren a esa persona
   evento.exclusiones = evento.exclusiones
     .filter(e => e.persona !== nombre)
     .map(e => ({ ...e, noPuedeDarA: e.noPuedeDarA.filter(x => x !== nombre) }));

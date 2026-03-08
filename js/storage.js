@@ -1,5 +1,3 @@
-// ── STORAGE.JS ──────────────────────────────────────────────
-
 function guardarEvento(evento) {
   localStorage.setItem("regalo_evento", JSON.stringify(evento));
 }

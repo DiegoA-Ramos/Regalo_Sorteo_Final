@@ -25,12 +25,9 @@
     <div class="step-dot"></div>
   </div>
 
-
-  <!-- ── Bootstrap grid: 1 col móvil, 2 cols md+ ── -->
   <div class="container-fluid px-3" style="max-width:800px; width:100%;">
     <div class="row g-4">
 
-      <!-- Columna izquierda: tipo de evento + nombre -->
       <div class="col-12 col-md-6">
         <div class="card-box h-100">
           <h2 class="mb-1 fw-black">Tido de evento</h2>
@@ -51,7 +48,6 @@
         </div>
       </div>
 
-      <!-- Columna derecha: fecha + presupuesto -->
       <div class="col-12 col-md-6">
         <div class="card-box h-100">
 
@@ -78,9 +74,8 @@
         </div>
       </div>
 
-    </div><!-- /row -->
+    </div>
 
-    <!-- Alerta y botones de navegación -->
     <div class="row mt-3">
       <div class="col-12">
         <div id="alerta" class="mb-2"></div>
@@ -91,7 +86,7 @@
       </div>
     </div>
 
-  </div><!-- /container -->
+  </div>
 
 </div>
 
@@ -101,7 +96,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const ev = obtenerEvento();
   if (!ev || !ev.organizador) { window.location.href = 'organizador.html'; return; }
 
-  // Pre-llenar si ya existe
   if (ev.celebracion) document.getElementById('inp-celebracion').value = ev.celebracion;
   if (ev.fecha)       document.getElementById('inp-fecha').value = ev.fecha;
   if (ev.tipoEvento) {

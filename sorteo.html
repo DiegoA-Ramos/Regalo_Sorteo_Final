@@ -29,7 +29,6 @@
     <div class="step-dot active"></div>
   </div>
 
-  <!-- Tabs solo visibles en móvil (< md) -->
   <ul class="nav nav-pills justify-content-center mb-4 gap-2 flex-wrap" id="tabs-nav">
     <li class="nav-item">
       <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-datos" type="button">
@@ -43,11 +42,9 @@
     </li>
   </ul>
 
-  <!-- ── Bootstrap grid: 1 col en móvil, 2 cols en md+ ── -->
   <div class="container-fluid px-3" style="max-width:960px; width:100%;">
     <div class="row g-4 tab-content">
 
-      <!-- ══ COLUMNA DATOS ══ -->
       <div class="col-12 col-md-5 tab-pane fade show active" id="tab-datos">
         <div class="card-box h-100">
           <h2 class="fw-black mb-1">Datos del evento</h2>
@@ -62,11 +59,9 @@
         </div>
       </div>
 
-      <!-- ══ COLUMNA SORTEO ══ -->
       <div class="col-12 col-md-7 tab-pane fade" id="tab-sorteo">
         <div class="card-box h-100 text-center">
 
-          <!-- Estado inicial -->
           <div id="estado-inicio">
             <p class="sorteo-header">Inicio del sorteo</p>
             <p class="text-muted mb-4" style="font-size:.9rem;">
@@ -77,13 +72,11 @@
             </button>
           </div>
 
-          <!-- Animación bombo -->
           <div class="drum-wrap" id="drum-anim">
             <p class="drum-text">SORTEANDO...</p>
             <div class="spinner-border text-danger mt-2" style="width:2.2rem;height:2.2rem;"></div>
           </div>
 
-          <!-- Resultados -->
           <div id="estado-resultado" class="d-none text-start">
             <h3 class="fw-black text-center mb-4" style="color:var(--primary);">Resultados</h3>
             <div id="lista-resultados" class="d-flex flex-column gap-3"></div>
@@ -93,7 +86,6 @@
             </div>
           </div>
 
-          <!-- Error -->
           <div id="error-sorteo" class="d-none">
             <div class="alert alert-danger mt-3 text-start">
               No se pudo generar un sorteo válido con las exclusiones actuales.
@@ -104,14 +96,14 @@
         </div>
       </div>
 
-    </div><!-- /row -->
-  </div><!-- /container -->
+    </div>
+  </div>
 
   <div class="text-center mt-3">
     <a href="index.html" class="btn-main">Inicio</a>
   </div>
 
-</div><!-- /page-wrapper -->
+</div>
 
 <script src="js/storage.js"></script>
 <script src="js/sorteo.js"></script>
@@ -123,7 +115,6 @@ window.addEventListener('DOMContentLoaded', () => {
   if (ev.resultadoSorteo && ev.resultadoSorteo.length) mostrarResultados(ev.resultadoSorteo);
 });
 
-// ── DATOS (lee SIEMPRE desde localStorage, nunca de RAM) ─
 function renderDatos() {
   const evento = JSON.parse(localStorage.getItem('regalo_evento'));
   const cont   = document.getElementById('datos-contenido');
@@ -172,7 +163,6 @@ function renderDatos() {
   `;
 }
 
-// ── SORTEO ────────────────────────────────────────────────
 function lanzar() {
   document.getElementById('estado-inicio').classList.add('d-none');
   document.getElementById('drum-anim').classList.add('show');

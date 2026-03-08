@@ -16,7 +16,6 @@
     </a>
   </div>
 
-  <!-- step bar -->
   <div class="step-bar mb-3">
     <div class="step-dot active"></div>
     <div class="step-dot"></div>
@@ -52,7 +51,6 @@
 
 <script src="js/storage.js"></script>
 <script>
-  // Pre-cargar si ya existe
   window.addEventListener('DOMContentLoaded', () => {
     const ev = obtenerEvento();
     if (ev && ev.organizador) {
@@ -71,10 +69,8 @@
 
     const incluir = document.getElementById('chk-incluir').checked;
 
-    // Si existe un evento previo, conservar datos; si no, crear vacío
     let evento = obtenerEvento() || eventoVacio();
 
-    // Si cambia el organizador, reiniciar participantes para evitar duplicados
     if (evento.organizador !== nombre) {
       evento = eventoVacio();
     }
@@ -82,7 +78,6 @@
     evento.organizador = nombre;
     evento.incluirOrganizador = incluir;
 
-    // Asegurarse de que el organizador esté o no en participantes según el checkbox
     evento.participantes = evento.participantes.filter(p => p !== evento.organizador);
     if (incluir) evento.participantes.unshift(nombre);
 

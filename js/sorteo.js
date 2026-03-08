@@ -1,5 +1,3 @@
-// ── SORTEO.JS ────────────────────────────────────────────────
-
 function realizarSorteo() {
   const evento = obtenerEvento();
   if (!evento || evento.participantes.length < 2) return null;
