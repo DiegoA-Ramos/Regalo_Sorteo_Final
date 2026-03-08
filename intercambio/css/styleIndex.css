@@ -1,0 +1,10 @@
+body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+
+    .splash-wrap { text-align:center; position:relative; z-index:1; padding:40px 20px; }
+    .splash-desc { font-size:1.05rem; color:var(--muted); max-width:360px; margin:0 auto 36px; font-weight:600; }
+    .features { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:40px; }
+    
+    .feature-badge {
+        background:#fff; border:2px solid #fde8e8; border-radius:999px;
+        padding:6px 16px; font-size:.82rem; font-weight:700; color:var(--primary);
+}

@@ -1,0 +1,77 @@
+    /* ── TABS DE PERSONA ── */
+    .persona-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+    .persona-tab {
+      padding:7px 16px; border-radius:999px; border:2px solid #e5e7eb;
+      background:#fff; font-family:'Nunito',sans-serif; font-weight:700;
+      font-size:.85rem; color:var(--muted); cursor:pointer; transition:.2s;
+    }
+    .persona-tab:hover  { border-color:var(--primary); color:var(--primary); }
+    .persona-tab.active { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .persona-tab.tiene-excl::after { content:''; }
+
+    /* ── COLUMNAS DRAG & DROP ── */
+    .dd-grid {
+      display: grid;
+      grid-template-columns: 1fr 28px 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+    @media(max-width:480px) {
+      .dd-grid { grid-template-columns:1fr; }
+      .dd-arrow { display:none; }
+    }
+
+    .dd-col-title {
+      font-size:.75rem; font-weight:800; text-transform:uppercase;
+      letter-spacing:1px; margin-bottom:8px;
+    }
+    .dd-col-title.verde { color:#16a34a; }
+    .dd-col-title.rojo  { color:var(--primary); }
+
+    .dd-zone {
+      min-height:100px; border-radius:14px; padding:10px;
+      border:2px dashed #e5e7eb; transition:border-color .2s, background .2s, transform .15s;
+    }
+    .dd-zone.disponibles { background:#f9fafb; border-color:#d1d5db; }
+    .dd-zone.bloqueados  { background:#fff5f5; border-color:#fecaca; }
+    .dd-zone.drag-over   { border-color:var(--primary); background:#fff0f0; transform:scale(1.02); }
+    .dd-zone.bloqueados.drag-over { background:#fee2e2; }
+
+    /* ── CHIPS ── */
+    .dd-chip {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:6px 13px; border-radius:999px; font-family:'Nunito',sans-serif;
+      font-weight:700; font-size:.86rem; cursor:grab; user-select:none;
+      margin:3px; transition:transform .15s, box-shadow .15s, opacity .2s;
+      border:2px solid transparent;
+    }
+    .dd-chip:active { cursor:grabbing; }
+    .dd-chip.dragging { opacity:.3; transform:scale(.9); }
+
+    .dd-zone.disponibles .dd-chip {
+      background:#fff; border-color:#d1d5db; color:var(--deep);
+      box-shadow:0 1px 4px rgba(0,0,0,.07);
+    }
+    .dd-zone.disponibles .dd-chip:hover {
+      border-color:var(--primary); color:var(--primary);
+      box-shadow:0 3px 10px rgba(255,107,107,.2);
+    }
+    .dd-zone.bloqueados .dd-chip {
+      background:#fee2e2; border-color:#fca5a5; color:var(--primary);
+    }
+    .dd-zone.bloqueados .dd-chip:hover { background:#fecaca; }
+
+    .dd-empty { color:#cbd5e1; font-size:.82rem; font-weight:600; text-align:center; padding:12px 0; }
+    .dd-arrow { text-align:center; padding-top:30px; font-size:1.4rem; color:#fca5a5; }
+
+    /* ── RESUMEN ── */
+    .resumen-item { margin-bottom:5px; font-size:.88rem; }
+
+    /* ── TOAST GUARDADO ── */
+    .saved-toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+      background:var(--accent); color:#fff; padding:8px 24px; border-radius:999px;
+      font-weight:700; font-size:.88rem; box-shadow:0 4px 16px rgba(107,203,119,.4);
+      opacity:0; transition:opacity .3s; pointer-events:none; z-index:999;
+    }
+    .saved-toast.show { opacity:1; }

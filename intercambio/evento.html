@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegaloSort – Evento</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <div class="text-center mb-3">
+    <a href="index.html" class="text-decoration-none">
+      <h1 class="logo-title">Regalo Sorteo</h1>
+    </a>
+  </div>
+
+  <div class="step-bar mb-3">
+    <div class="step-dot done"></div>
+    <div class="step-dot done"></div>
+    <div class="step-dot done"></div>
+    <div class="step-dot done"></div>
+    <div class="step-dot active"></div>
+    <div class="step-dot"></div>
+  </div>
+
+
+  <!-- ── Bootstrap grid: 1 col móvil, 2 cols md+ ── -->
+  <div class="container-fluid px-3" style="max-width:800px; width:100%;">
+    <div class="row g-4">
+
+      <!-- Columna izquierda: tipo de evento + nombre -->
+      <div class="col-12 col-md-6">
+        <div class="card-box h-100">
+          <h2 class="mb-1 fw-black">Tido de evento</h2>
+          <p class="text-muted mb-3" style="font-size:.88rem;">Elige el tipo de celebracion</p>
+
+          <div class="chip-group mb-3" id="tipo-chips">
+            <button class="chip" data-val="Navidad"             onclick="selTipo(this)">Navidad</button>
+            <button class="chip" data-val="Intercambio"         onclick="selTipo(this)">Intercambio</button>
+            <button class="chip" data-val="Día de San Valentín" onclick="selTipo(this)">San Valentin</button>
+            <button class="chip" data-val="Día del Niño"        onclick="selTipo(this)">Dia del Niño</button>
+            <button class="chip" data-val="Día de la Madre"     onclick="selTipo(this)">Dia de la Madre</button>
+            <button class="chip" data-val="Cumpleaños"          onclick="selTipo(this)">Cumpleaños</button>
+            <button class="chip" data-val="Otro"                onclick="selTipo(this)">Otro</button>
+          </div>
+
+          <label class="fw-bold mb-1 d-block">Nombre de la celebracion:</label>
+          <input id="inp-celebracion" class="inp"/>
+        </div>
+      </div>
+
+      <!-- Columna derecha: fecha + presupuesto -->
+      <div class="col-12 col-md-6">
+        <div class="card-box h-100">
+
+          <h2 class="mb-1 fw-black">Fecha</h2>
+          <p class="text-muted mb-2" style="font-size:.88rem;">Fechas sugeridas</p>
+          <div id="fechas-sugeridas" class="mb-2"></div>
+          <label class="fw-bold mb-1 d-block">Otra fecha:</label>
+          <input id="inp-fecha" type="date" class="inp mb-1" oninput="limpiarFechaSug()" />
+
+          <hr class="fancy" />
+
+          <h2 class="mb-1 fw-black">Presupuesto:</h2>
+          <p class="text-muted mb-2" style="font-size:.88rem;">Monto por persona</p>
+          <div class="budget-grid mb-2" id="budget-chips">
+            <button class="budget-chip" data-val="100"  onclick="selBudget(this)">$100</button>
+            <button class="budget-chip" data-val="150"  onclick="selBudget(this)">$150</button>
+            <button class="budget-chip" data-val="200"  onclick="selBudget(this)">$200</button>
+            <button class="budget-chip" data-val="300"  onclick="selBudget(this)">$300</button>
+            <button class="budget-chip" data-val="500"  onclick="selBudget(this)">$500</button>
+            <button class="budget-chip" data-val="otro" onclick="selBudget(this)">Otro</button>
+          </div>
+          <input id="inp-custom-budget" class="inp d-none" type="number" min="1" placeholder="Introduce el monto..." />
+
+        </div>
+      </div>
+
+    </div><!-- /row -->
+
+    <!-- Alerta y botones de navegación -->
+    <div class="row mt-3">
+      <div class="col-12">
+        <div id="alerta" class="mb-2"></div>
+        <div class="d-flex justify-content-between">
+          <a href="exclusiones.html" class="btn-ghost">Atras</a>
+          <button class="btn-main" onclick="guardar()">Continuar</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+</div>
+
+<script src="js/storage.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const ev = obtenerEvento();
+  if (!ev || !ev.organizador) { window.location.href = 'organizador.html'; return; }
+
+  // Pre-llenar si ya existe
+  if (ev.celebracion) document.getElementById('inp-celebracion').value = ev.celebracion;
+  if (ev.fecha)       document.getElementById('inp-fecha').value = ev.fecha;
+  if (ev.tipoEvento) {
+    const chip = [...document.querySelectorAll('#tipo-chips .chip')].find(c => c.dataset.val === ev.tipoEvento);
+    if (chip) chip.classList.add('selected');
+  }
+  if (ev.presupuesto) {
+    const chip = [...document.querySelectorAll('#budget-chips .budget-chip')].find(c => c.dataset.val === ev.presupuesto);
+    if (chip) chip.classList.add('selected');
+    else {
+      document.querySelector('[data-val="otro"]').classList.add('selected');
+      const custom = document.getElementById('inp-custom-budget');
+      custom.classList.remove('d-none');
+      custom.value = ev.presupuesto;
+    }
+  }
+
+  generarFechasSug();
+});
+
+function selTipo(btn) {
+  document.querySelectorAll('#tipo-chips .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (btn.dataset.val !== 'Otro')
+    document.getElementById('inp-celebracion').value = btn.dataset.val;
+}
+
+function generarFechasSug() {
+  const cont = document.getElementById('fechas-sugeridas');
+  cont.innerHTML = '';
+  const hoy  = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const selFecha = obtenerEvento()?.fecha || '';
+
+  [7, 14, 21].forEach(dias => {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() + dias);
+    const val = d.toISOString().split('T')[0];
+    const btn = document.createElement('button');
+    btn.className = 'date-option' + (selFecha === val ? ' selected' : '');
+    btn.textContent = d.toLocaleDateString('es-MX', opts);
+    btn.dataset.val = val;
+    btn.onclick = () => {
+      document.querySelectorAll('.date-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('inp-fecha').value = val;
+    };
+    cont.appendChild(btn);
+  });
+}
+
+function limpiarFechaSug() {
+  document.querySelectorAll('.date-option').forEach(b => b.classList.remove('selected'));
+}
+
+function selBudget(btn) {
+  document.querySelectorAll('#budget-chips .budget-chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  const custom = document.getElementById('inp-custom-budget');
+  if (btn.dataset.val === 'otro') { custom.classList.remove('d-none'); custom.focus(); }
+  else custom.classList.add('d-none');
+}
+
+function guardar() {
+  const celebracion = document.getElementById('inp-celebracion').value.trim();
+  const fecha       = document.getElementById('inp-fecha').value;
+  const budgetChip  = document.querySelector('#budget-chips .budget-chip.selected');
+  const tipoChip    = document.querySelector('#tipo-chips .chip.selected');
+  const alerta      = document.getElementById('alerta');
+
+  let presupuesto = budgetChip ? budgetChip.dataset.val : '';
+  if (presupuesto === 'otro') presupuesto = document.getElementById('inp-custom-budget').value.trim();
+
+  if (!celebracion) { alerta.innerHTML = '<div class="alert alert-warning py-2">Escribe el nombre de la celebración.</div>'; return; }
+  if (!fecha)       { alerta.innerHTML = '<div class="alert alert-warning py-2">Selecciona una fecha.</div>'; return; }
+  if (!presupuesto) { alerta.innerHTML = '<div class="alert alert-warning py-2">Selecciona o escribe el presupuesto.</div>'; return; }
+
+  const evento = obtenerEvento();
+  evento.tipoEvento  = tipoChip ? tipoChip.dataset.val : 'Otro';
+  evento.celebracion = celebracion;
+  evento.fecha       = fecha;
+  evento.presupuesto = presupuesto;
+  guardarEvento(evento);
+
+  window.location.href = 'sorteo.html';
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

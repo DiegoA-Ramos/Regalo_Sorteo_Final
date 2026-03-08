@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegaloSort – Exclusiones</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styleExclusiones.css">
+</head>
+<body>
+
+<div class="saved-toast" id="saved-toast">✔ Guardado en localStorage</div>
+
+<div class="page-wrapper">
+
+  <div class="text-center mb-3">
+    <a href="index.html" class="text-decoration-none">
+      <div class="emoji-strip"></div>
+      <h1 class="logo-title">Regalo Sorteo</h1>
+    </a>
+    <p class="logo-sub mt-1">Paso 3 de 6 · Exclusiones</p>
+  </div>
+
+  <div class="step-bar mb-3">
+    <div class="step-dot done"></div>
+    <div class="step-dot done"></div>
+    <div class="step-dot active"></div>
+    <div class="step-dot"></div>
+    <div class="step-dot"></div>
+    <div class="step-dot"></div>
+  </div>
+
+  <div class="card-box" style="max-width:620px;">
+    <h2 class="mb-1 fw-black">Exclusiones</h2>
+    <p class="text-muted mb-4" style="font-size:.9rem;">
+      Selecciona una persona y arrastra los nombres hacia la zona Bloqueados
+      para que no le toquen en el sorteo. Arrástralos de regreso para quitarlos.
+    </p>
+
+    <!-- tabs: seleccionar para quién se configuran exclusiones -->
+    <p class="fw-bold mb-2" style="font-size:.88rem;">Configurar exclusiones para:</p>
+    <div class="persona-tabs" id="persona-tabs"></div>
+
+    <!-- área drag & drop -->
+    <div class="dd-grid mt-2">
+
+      <!-- zona izquierda: disponibles -->
+      <div>
+        <div class="dd-col-title verde">Puede sortear</div>
+        <div class="dd-zone disponibles" id="zone-disponibles"
+             ondragover="onOver(event,this)"
+             ondragleave="onLeave(this)"
+             ondrop="onDrop(event,'disponibles')">
+          <div class="dd-empty" id="empty-disp">—</div>
+        </div>
+      </div>
+
+      <!-- flecha central -->
+      <div class="dd-arrow">⇄</div>
+
+      <!-- zona derecha: bloqueados -->
+      <div>
+        <div class="dd-col-title rojo">Bloqueados</div>
+        <div class="dd-zone bloqueados" id="zone-bloqueados"
+             ondragover="onOver(event,this)"
+             ondragleave="onLeave(this)"
+             ondrop="onDrop(event,'bloqueados')">
+        </div>
+      </div>
+
+    </div><!-- /dd-grid -->
+
+    <!-- resumen global de exclusiones -->
+    <div id="resumen-wrap" class="mt-4" style="display:none;">
+      <hr class="fancy" />
+      <p class="fw-bold mb-2" style="font-size:.85rem;color:var(--muted);">Resumen de todas las exclusiones:</p>
+      <div id="resumen-lista"></div>
+    </div>
+
+    <hr class="fancy" />
+    <div class="d-flex justify-content-between">
+      <a href="participantes.html" class="btn-ghost">Atras</a>
+      <button class="btn-main" onclick="window.location.href='evento.html'">Continuar</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/storage.js"></script>
+<script>
+let personaActiva = null;
+let chipDragging  = null;
+
+// ── INIT ─────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const ev = obtenerEvento();
+  if (!ev || !ev.organizador)      { window.location.href = 'organizador.html';    return; }
+  if (ev.participantes.length < 2) { window.location.href = 'participantes.html';  return; }
+  renderTabs();
+  selPersona(ev.participantes[0]);
+});
+
+// ── TABS ──────────────────────────────────────────────────
+function renderTabs() {
+  const ev   = obtenerEvento();
+  const cont = document.getElementById('persona-tabs');
+  cont.innerHTML = '';
+
+  ev.participantes.forEach(nombre => {
+    const btn = document.createElement('button');
+    const tieneExcl = ev.exclusiones.some(e => e.persona === nombre && e.noPuedeDarA.length);
+    btn.className = `persona-tab${nombre === personaActiva ? ' active' : ''}${tieneExcl ? ' tiene-excl' : ''}`;
+    btn.textContent = nombre;
+    btn.dataset.nombre = nombre;
+    btn.onclick = () => selPersona(nombre);
+    cont.appendChild(btn);
+  });
+}
+
+function selPersona(nombre) {
+  personaActiva = nombre;
+  document.querySelectorAll('.persona-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.nombre === nombre)
+  );
+  renderZonas();
+}
+
+// ── ZONAS ─────────────────────────────────────────────────
+function renderZonas() {
+  const ev    = obtenerEvento();
+  const exObj = ev.exclusiones.find(e => e.persona === personaActiva) || { noPuedeDarA: [] };
+  const bloq  = exObj.noPuedeDarA;
+  const disp  = ev.participantes.filter(p => p !== personaActiva && !bloq.includes(p));
+
+  const zD = document.getElementById('zone-disponibles');
+  const zB = document.getElementById('zone-bloqueados');
+
+  zD.querySelectorAll('.dd-chip').forEach(c => c.remove());
+  zB.querySelectorAll('.dd-chip').forEach(c => c.remove());
+
+  disp.forEach(p => zD.appendChild(mkChip(p)));
+  bloq.forEach(p => zB.appendChild(mkChip(p)));
+
+  document.getElementById('empty-disp').style.display = disp.length ? 'none' : 'block';
+  document.getElementById('empty-bloq').style.display = bloq.length ? 'none' : 'block';
+
+  renderResumen();
+}
+
+function mkChip(nombre) {
+  const c = document.createElement('div');
+  c.className   = 'dd-chip';
+  c.draggable   = true;
+  c.dataset.nombre = nombre;
+  c.innerHTML   = `<span>${nombre}</span>`;
+
+  c.addEventListener('dragstart', e => {
+    chipDragging = nombre;
+    c.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  c.addEventListener('dragend', () => {
+    c.classList.remove('dragging');
+    chipDragging = null;
+  });
+  return c;
+}
+
+// ── DRAG HANDLERS ─────────────────────────────────────────
+function onOver(e, zone) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  zone.classList.add('drag-over');
+}
+function onLeave(zone) {
+  zone.classList.remove('drag-over');
+}
+function onDrop(e, destino) {
+  e.preventDefault();
+  const zone = document.getElementById(destino === 'bloqueados' ? 'zone-bloqueados' : 'zone-disponibles');
+  zone.classList.remove('drag-over');
+  if (!chipDragging) return;
+
+  const ev = obtenerEvento();
+  let ex   = ev.exclusiones.find(e => e.persona === personaActiva);
+  if (!ex) { ex = { persona: personaActiva, noPuedeDarA: [] }; ev.exclusiones.push(ex); }
+
+  if (destino === 'bloqueados') {
+    if (!ex.noPuedeDarA.includes(chipDragging)) ex.noPuedeDarA.push(chipDragging);
+  } else {
+    ex.noPuedeDarA = ex.noPuedeDarA.filter(x => x !== chipDragging);
+  }
+
+  ev.exclusiones = ev.exclusiones.filter(e => e.noPuedeDarA.length > 0);
+  guardarEvento(ev);
+  flashToast();
+  renderTabs();
+  renderZonas();
+}
+
+// ── RESUMEN ───────────────────────────────────────────────
+function renderResumen() {
+  const ev    = obtenerEvento();
+  const wrap  = document.getElementById('resumen-wrap');
+  const lista = document.getElementById('resumen-lista');
+  const conEx = ev.exclusiones.filter(e => e.noPuedeDarA.length);
+
+  if (!conEx.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  lista.innerHTML = conEx.map(e =>
+    `<div class="resumen-item">
+       <span class="tag-pill">${e.persona}</span>
+       <span style="color:var(--muted);font-size:.8rem;"> no sortea a: </span>
+       ${e.noPuedeDarA.map(x => `<span class="tag-pill">${x}</span>`).join('')}
+     </div>`
+  ).join('');
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+function flashToast() {
+  const t = document.getElementById('saved-toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1600);
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

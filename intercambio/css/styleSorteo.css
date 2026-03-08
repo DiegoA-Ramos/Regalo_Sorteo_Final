@@ -1,0 +1,31 @@
+/* Drum roll */
+
+.drum-wrap { display:none; flex-direction:column; align-items:center; gap:14px; padding:28px 0; }
+.drum-wrap.show { display:flex; }
+.drum-emoji { font-size:3.5rem; animation:drumRoll .15s ease-in-out infinite alternate; }
+@keyframes drumRoll {
+    from { transform:rotate(-15deg) scale(1); }
+    to   { transform:rotate(15deg)  scale(1.1); }
+}
+
+.drum-text { font-weight:800; font-size:1.1rem; color:var(--primary); }
+
+    /* sticky header en la columna de sorteo */
+.sorteo-header { font-weight:900; font-size:1.15rem; color:var(--deep); margin-bottom:4px; }
+
+    /* nav pills */
+.nav-pills .nav-link {
+    color:var(--muted); font-weight:700; border-radius:12px; padding:9px 20px;
+}
+
+.nav-pills .nav-link.active {
+    background:var(--primary); color:#fff;
+    box-shadow:0 4px 14px rgba(255,107,107,.3);
+}
+
+    /* en desktop: ocultar tabs y mostrar columnas lado a lado */
+@media(min-width:768px) {
+    #tabs-nav   { display:none !important; }
+    #tab-datos  { display:block !important; opacity:1 !important; }
+    #tab-sorteo { display:block !important; opacity:1 !important; }
+}
